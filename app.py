@@ -18,37 +18,23 @@ from pdpyras import APISession
 session = APISession(api_token)
 
 def get_current_oncall():
-    schedules_list = session.rget('/schedules')
+    # get and format current time and 30 seconds for date range param
     now = datetime.now()
-    now_string = now.strftime("%Y-%m-%dT%H:%M:%S")
+    delta = timedelta(hours=2)
+    dt_string = now.strftime("%Y-%m-%dT%H:%M:%S")
+    plus30seconds = datetime.now() + timedelta(seconds=30)
+    plus30seconds_string = plus30seconds.strftime("%Y-%m-%dT%H:%M:%S")
+
+    # get user on-call user within the next 30 seconds for each schedule in schedules_list
+    schedules_list = session.rget('/schedules')
     for i in schedules_list:
         schedule_id = str(i['id'])
-        current_oncall = session.rget('/schedules/'+schedule_id+"/users", params={'since':now_string,'until':dt_string})
-        pp.pprint(i['name'] + " -- " + current_oncall[0]['name'])
+        current_oncall = session.rget('/schedules/'+schedule_id+"/users", params={'since':dt_string,'until':plus30seconds_string})
+        on_call_schedule = i['name']
+        on_call_user = current_oncall[0]['name']
+        if on_call_user == None:
+            on_call_user = "No one's on call."
+        print(on_call_schedule + " -- " + on_call_user)
+        #pp.pprint(current_oncall)
 
-
-#get_current_oncall()
-
-# ("%d/%m/%Y%H:%M:%S")
-
-now = datetime.now()
-delta = timedelta(hours=2)
-dt_string = now.strftime("%Y-%m-%dT%H:%M:%S")
-plus2 = dt_string + datetime.timedelta(hours=2)
-print("curent: ", dt_string)
-print("+2: "+ plus2)
-
-
-
-
-# Pseudo Code
-'''
-Create list of schedules
-Find current person on-Call
-print list of on-call schedules and their corresponding personnel
-'''
-
-#items to consider
-'''
-Figure out how to observe local time zone
-'''
+get_current_oncall()
