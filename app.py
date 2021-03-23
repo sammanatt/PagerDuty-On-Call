@@ -31,9 +31,10 @@ def get_current_oncall():
         schedule_id = str(i['id'])
         current_oncall = session.rget('/schedules/'+schedule_id+"/users", params={'since':dt_string,'until':plus30seconds_string})
         on_call_schedule = i['name']
-        on_call_user = current_oncall[0]['name']
-        if on_call_user == None:
+        if len(current_oncall) <1:
             on_call_user = "No one's on call."
+        else:
+            on_call_user = current_oncall[0]['name']
         print(on_call_schedule + " -- " + on_call_user)
         #pp.pprint(current_oncall)
 
