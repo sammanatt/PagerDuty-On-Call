@@ -36,6 +36,5 @@ def get_current_oncall():
         else:
             on_call_user = current_oncall[0]['name']
         print(on_call_schedule + " -- " + on_call_user)
-        #pp.pprint(current_oncall)
 
 get_current_oncall()
